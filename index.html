@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wordle Deutsch</title>
+  <link rel="manifest" href="manifest.json">
+  <script src="js/main.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js');
+      });
+    }
+  </script>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+  <div id="container">
+    <div id="game">
+      <header>
+        <div class="menu-left">
+          <span class="material-icons">help_outline</span>
+        </div>
+        <h1 class="title">WORDLE DEUTSCH</h1>
+        <div class="menu-right">
+          <span class="material-icons">leaderboard</span>
+          <span class="material-icons">settings</span>
+        </div>
+      </header>
+
+      <div id="board-container">
+        <div id="board"></div>
+      </div>
+
+      <div id="keyboard-container">
+        <div class="keyboard-row">
+          <button data-key="q">q</button>
+          <button data-key="w">w</button>
+          <button data-key="e">e</button>
+          <button data-key="r">r</button>
+          <button data-key="t">t</button>
+          <button data-key="y">y</button>
+          <button data-key="u">u</button>
+          <button data-key="i">i</button>
+          <button data-key="o">o</button>
+          <button data-key="p">p</button>
+        </div>
+        <div class="keyboard-row">
+          <div class="spacer-half"></div>
+          <button data-key="a">a</button>
+          <button data-key="s">s</button>
+          <button data-key="d">d</button>
+          <button data-key="f">f</button>
+          <button data-key="g">g</button>
+          <button data-key="h">h</button>
+          <button data-key="j">j</button>
+          <button data-key="k">k</button>
+          <button data-key="l">l</button>
+          <div class="spacer-half"></div>
+        </div>
+        <div class="keyboard-row">
+          <button data-key="enter" class="wide-button">Enter</button>
+          <button data-key="z">z</button>
+          <button data-key="x">x</button>
+          <button data-key="c">c</button>
+          <button data-key="v">v</button>
+          <button data-key="b">b</button>
+          <button data-key="n">n</button>
+          <button data-key="m">m</button>
+          <button data-key="del" class="wide-button">Del</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div id="modal-overlay" class="hidden"></div>
+
+  <div id="help-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>ANLEITUNG</h2>
+        <span class="close-modal material-icons">close</span>
+      </div>
+      <p>Errate das <strong>WORDLE</strong> in 6 Versuchen.</p>
+      <p>Jeder Versuch muss ein gültiges 5-buchstabiges Wort sein.</p>
+      <p>Die Farben der Kacheln ändern sich, um anzuzeigen wie nah du an der Lösung bist.</p>
+      <div class="examples">
+        <p><strong>Beispiele</strong></p>
+        <div class="example-row">
+          <div class="square small-square" style="background-color: rgb(83, 141, 78); border-color: rgb(83, 141, 78);">E
+          </div>
+          <span>Der Buchstabe <strong>E</strong> ist im Wort und an der richtigen Stelle.</span>
+        </div>
+        <div class="example-row">
+          <div class="square small-square"
+            style="background-color: rgb(181, 159, 59); border-color: rgb(181, 159, 59);">L</div>
+          <span>Der Buchstabe <strong>L</strong> ist im Wort aber an der falschen Stelle.</span>
+        </div>
+        <div class="example-row">
+          <div class="square small-square" style="background-color: rgb(58, 58, 60); border-color: rgb(58, 58, 60);">X
+          </div>
+          <span>Der Buchstabe <strong>X</strong> kommt nicht im Wort vor.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="stats-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>STATISTIK</h2>
+        <span class="close-modal material-icons">close</span>
+      </div>
+      <div id="statistics">
+        <div class="stat-box">
+          <div id="games-played" class="stat-value">0</div>
+          <div class="stat-label">Gespielt</div>
+        </div>
+        <div class="stat-box">
+          <div id="win-pct" class="stat-value">0</div>
+          <div class="stat-label">Gewonnen %</div>
+        </div>
+        <div class="stat-box">
+          <div id="current-streak" class="stat-value">0</div>
+          <div class="stat-label">Aktuelle Serie</div>
+        </div>
+        <div class="stat-box">
+          <div id="max-streak" class="stat-value">0</div>
+          <div class="stat-label">Max. Serie</div>
+        </div>
+      </div>
+      <h3>VERTEILUNG DER VERSUCHE</h3>
+      <div id="guess-distribution">
+        <!-- Bars will be injected here -->
+      </div>
+      <div id="share-section">
+        <button id="share-button">TEILEN <span class="material-icons"
+            style="font-size: 18px; vertical-align: middle;">share</span></button>
+        <button id="history-button">LÖSUNGEN <span class="material-icons"
+            style="font-size: 18px;">history</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="history-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>LÖSUNGS-HISTORIE</h2>
+        <span class="close-modal material-icons">close</span>
+      </div>
+      <div id="history-list" class="history-container">
+        <!-- JS will populate this -->
+      </div>
+    </div>
+  </div>
+
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>EINSTELLUNGEN</h2>
+        <span class="close-modal material-icons">close</span>
+      </div>
+      <div class="setting-item">
+        <p>Wordle Deutsch PWA</p>
+        <p>Version 1.3 by BGR</p>
+      </div>
+      <div class="footer">
+        <p>Made with ❤️</p>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
