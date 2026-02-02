@@ -405,6 +405,28 @@ textarea#custom-word-list {
 }
 
 /* History Styles */
+#new-game-button {
+  background-color: #538d4e;
+  color: white;
+  font-family: inherit;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  padding: 10px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-right: 10px;
+  /* Gap between buttons */
+}
+
+#new-game-button:hover {
+  opacity: 0.9;
+}
+
 #history-button {
   background-color: #538d4e;
   color: white;

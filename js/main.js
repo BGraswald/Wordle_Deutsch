@@ -206,6 +206,35 @@ document.addEventListener("DOMContentLoaded", () => {
     openModal('history-modal');
   });
 
+  document.getElementById('new-game-button').addEventListener('click', () => {
+    resetGame();
+  });
+
+  function resetGame() {
+    closeModal();
+
+    // Reset variables
+    guessedWords = [[]];
+    availableSpace = 1;
+    guessedWordCount = 0;
+
+    // Pick new word
+    getNewWord();
+
+    // Reset Grid
+    const board = document.getElementById("board");
+    board.innerHTML = '';
+    createSquares();
+
+    // Reset Keyboard Colors
+    keys.forEach(key => {
+      key.style.backgroundColor = '';
+    });
+
+    // Reset Animations on Keyboard
+    // (If we had specific animation classes on keys, we'd remove them here too)
+  }
+
   // --- GAME LOGIC ---
 
   function getCurrentWordArr() {
