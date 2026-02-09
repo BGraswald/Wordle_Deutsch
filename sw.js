@@ -1,7 +1,8 @@
-const CACHE_NAME = 'wordle-de-v6';
+const CACHE_NAME = 'wordle-de-v8';
 const ASSETS = [
   './',
   './index.html',
+  './icon.png',
   './css/styles.css',
   './js/main.js',
   './wordle_german_final.txt',
