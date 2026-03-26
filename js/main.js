@@ -16,13 +16,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- LOADING WORD LIST ---
   let wordList = [];
+  let targetWordsList = [];
 
   function loadWordList() {
-    fetch('wordle_german_final.txt')
-      .then(response => response.text())
-      .then(data => {
-        wordList = data.split('\n').map(word => word.trim().toUpperCase()).filter(word => word.length > 0);
-        console.log(`Loaded ${wordList.length} words.`);
+    Promise.all([
+      fetch('wordle_german_final.txt').then(response => response.text()),
+      fetch('wordle_german_shortlist.txt').then(response => response.text())
+    ])
+      .then(([finalData, shortData]) => {
+        const finalWords = finalData.split('\n').map(w => w.trim().toUpperCase()).filter(w => w.length > 0);
+        const shortWords = shortData.split('\n').map(w => w.trim().toUpperCase()).filter(w => w.length > 0);
+
+        targetWordsList = shortWords;
+        wordList = Array.from(new Set([...finalWords, ...shortWords]));
+
+        console.log(`Loaded ${wordList.length} allowed words and ${targetWordsList.length} target words.`);
         getNewWord();
       })
       .catch(err => console.error(err));
@@ -31,8 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
   loadWordList();
 
   function getNewWord() {
-    if (wordList.length > 0) {
-      word = wordList[Math.floor(Math.random() * wordList.length)];
+    if (targetWordsList.length > 0) {
+      word = targetWordsList[Math.floor(Math.random() * targetWordsList.length)];
       console.log(word);
     }
   }
@@ -181,24 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- SHARING LOGIC ---
-  document.getElementById('share-button').addEventListener('click', () => {
-    let shareText = `Wordle Deutsch ${guessedWordCount}/6\n\n`;
-    const board = document.getElementById("board");
-    for (let i = 0; i < guessedWordCount; i++) {
-      for (let j = 0; j < 5; j++) {
-        const square = board.children[i * 5 + j];
-        const color = square.style.backgroundColor;
-        if (color === "rgb(83, 141, 78)") shareText += "🟩";
-        else if (color === "rgb(181, 159, 59)") shareText += "🟨";
-        else shareText += "⬛";
-      }
-      shareText += "\n";
-    }
-    navigator.clipboard.writeText(shareText).then(() => {
-      alert("Ergebnis in die Zwischenablage kopiert!");
-    });
-  });
+
 
 
   document.getElementById('history-button').addEventListener('click', () => {
