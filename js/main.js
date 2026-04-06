@@ -14,6 +14,64 @@ document.addEventListener("DOMContentLoaded", () => {
   const LS_WORD_MODS = "wordle_modifications"; // { added: [], removed: [] }
   const LS_GAME_STATE = "wordle_state";
 
+  // --- GAME STATE ---
+  function saveGameState() {
+    const state = {
+      word,
+      guessedWords,
+      guessedWordCount,
+      availableSpace
+    };
+    localStorage.setItem(LS_GAME_STATE, JSON.stringify(state));
+  }
+
+  function loadGameState() {
+    const saved = localStorage.getItem(LS_GAME_STATE);
+    if (saved) {
+      try {
+        const state = JSON.parse(saved);
+        if (state && state.word && state.guessedWords) {
+          word = state.word;
+          guessedWords = state.guessedWords;
+          guessedWordCount = state.guessedWordCount;
+          availableSpace = state.availableSpace;
+
+          restoreDOMFromState();
+          return true;
+        }
+      } catch (e) {
+        console.error("Failed to load game state", e);
+      }
+    }
+    return false;
+  }
+
+  function restoreDOMFromState() {
+    guessedWords.forEach((wordArr, wordIndex) => {
+      wordArr.forEach((letter, letterIndex) => {
+        const letterId = wordIndex * 5 + letterIndex + 1;
+        const letterEl = document.getElementById(String(letterId));
+        if (letterEl) {
+          letterEl.textContent = letter;
+        }
+      });
+
+      if (wordIndex < guessedWordCount) {
+        const currentWord = wordArr.join("").toUpperCase();
+        const tileColors = getTileColors(currentWord);
+        wordArr.forEach((letter, index) => {
+          const tileColor = tileColors[index];
+          const letterId = wordIndex * 5 + index + 1;
+          const letterEl = document.getElementById(String(letterId));
+          if (letterEl) {
+            letterEl.style = `background-color:${tileColor};border-color:${tileColor}`;
+            updateKeyboardColor(letter, tileColor);
+          }
+        });
+      }
+    });
+  }
+
   // --- LOADING WORD LIST ---
   let wordList = [];
   let targetWordsList = [];
@@ -31,7 +89,9 @@ document.addEventListener("DOMContentLoaded", () => {
         wordList = Array.from(new Set([...finalWords, ...shortWords]));
 
         console.log(`Loaded ${wordList.length} allowed words and ${targetWordsList.length} target words.`);
-        getNewWord();
+        if (!loadGameState()) {
+          getNewWord();
+        }
       })
       .catch(err => console.error(err));
   }
@@ -42,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (targetWordsList.length > 0) {
       word = targetWordsList[Math.floor(Math.random() * targetWordsList.length)];
       console.log(word);
+      saveGameState();
     }
   }
 
@@ -284,6 +345,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     guessedWords.push([]);
+    saveGameState();
   }
 
   function updateGuessedWords(letter) {
@@ -296,6 +358,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       availableSpace = availableSpace + 1;
       availableSpaceEl.textContent = letter;
+      saveGameState();
     }
   }
 
@@ -378,6 +441,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const lastLetterEl = document.getElementById(String(availableSpace - 1));
       lastLetterEl.textContent = "";
       availableSpace = availableSpace - 1;
+      saveGameState();
     }
   }
 

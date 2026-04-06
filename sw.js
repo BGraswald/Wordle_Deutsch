@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wordle-de-v8';
+const CACHE_NAME = 'wordle-de-v9';
 const ASSETS = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const ASSETS = [
   './css/styles.css',
   './js/main.js',
   './wordle_german_final.txt',
+  './wordle_german_shortlist.txt',
   'https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css'
 ];
 
