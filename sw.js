@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wordle-de-v13';
+const CACHE_NAME = 'wordle-de-v14';
 const ASSETS = [
   './',
   './index.html',
