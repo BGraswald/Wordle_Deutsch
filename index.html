@@ -14,6 +14,15 @@
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js');
       });
+
+      // Reload the page when the new service worker takes control
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
+      });
     }
   </script>
   <link rel="stylesheet" href="css/styles.css" />

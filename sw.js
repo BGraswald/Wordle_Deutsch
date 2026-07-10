@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wordle-de-v15';
+const CACHE_NAME = 'wordle-de-v16';
 const ASSETS = [
   './',
   './index.html',
@@ -14,7 +14,14 @@ self.addEventListener('install', (e) => {
   self.skipWaiting(); // Force waiting service worker to become active
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      // Force fetch fresh files from the network instead of browser HTTP cache
+      const requests = ASSETS.map(url => {
+        if (url.startsWith('http')) {
+          return new Request(url);
+        }
+        return new Request(url, { cache: 'reload' });
+      });
+      return cache.addAll(requests);
     })
   );
 });
